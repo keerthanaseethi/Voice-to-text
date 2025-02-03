@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Speech to Text Demo</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 40px;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+    }
+    #result {
+      margin-top: 20px;
+      font-size: 18px;
+      border: 1px solid #ccc;
+      padding: 10px;
+      min-height: 50px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Speech to Text Demo</h1>
+  <button id="startBtn">Start Listening</button>
+  <div id="result">Your speech will appear here...</div>
+
+  <script>
+    // Check if the browser supports the Web Speech API
+    window.SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    
+    if (!window.SpeechRecognition) {
+      document.getElementById('result').textContent = "Sorry, your browser doesn't support speech recognition.";
+    } else {
+      // Create a new instance of SpeechRecognition
+      const recognition = new SpeechRecognition();
+      recognition.continuous = false; // Stop automatically after speech is detected
+      recognition.interimResults = false; // Only return final results
+      recognition.lang = 'en-US'; // Set the language
+
+      // When the recognition returns a result, display it
+      recognition.onresult = function(event) {
+        // Combine results (if there are multiple)
+        let transcript = '';
+        for (let i = event.resultIndex; i < event.results.length; i++) {
+          transcript += event.results[i][0].transcript;
+        }
+        document.getElementById('result').textContent = transcript;
+      };
+
+      // Log any errors
+      recognition.onerror = function(event) {
+        console.error('Speech recognition error:', event.error);
+      };
+
+      // Start recognition when the button is clicked
+      document.getElementById('startBtn').addEventListener('click', () => {
+        recognition.start();
+      });
+    }
+  </script>
+</body>
+</html>
